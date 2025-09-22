@@ -1,0 +1,125 @@
+import pandas as pd
+import numpy as np
+
+def load_data(path):
+    df = pd.read_csv(path)
+    return df
+
+def inspect_data(df):
+    print("Shape:", df.shape)
+    print("Columns:", df.columns.tolist())
+    print("Dtypes:\n", df.dtypes)
+    print("Missing values per column:\n", df.isnull().sum())
+
+def drop_duplicates(df):
+    before = df.shape[0]
+    df2 = df.drop_duplicates()
+    after = df2.shape[0]
+    print(f"Dropped {before - after} duplicate rows.")
+    return df2
+
+def handle_missing(df):
+    # Example: for numeric columns, fill with median; for categorical with mode
+    for col in df.columns:
+        if df[col].isnull().sum() > 0:
+            if df[col].dtype in [np.float64, np.int64]:
+                median = df[col].median()
+                df[col] = df[col].fillna(median)
+                print(f"Filled missing numeric '{col}' with median = {median}")
+            else:
+                mode = df[col].mode()[0]
+                df[col] = df[col].fillna(mode)
+                print(f"Filled missing categorical '{col}' with mode = {mode}")
+    return df
+
+def standardize_text(df):
+    # Trim whitespace, lowercase where appropriate, replace inconsistent entries
+    for col in df.select_dtypes(include=['object']).columns:
+        # strip whitespace
+        df[col] = df[col].str.strip()
+        # lowercase
+        df[col] = df[col].str.lower()
+    return df
+
+def fix_date_columns(df):
+    # If there is a date or datetime column
+    # Example: if there is a column named 'Dt_Customer' in this dataset
+    if 'Dt_Customer' in df.columns:
+        df['Dt_Customer'] = pd.to_datetime(df['Dt_Customer'], errors='coerce')
+        print("Fixed Dt_Customer to datetime.")
+    return df
+
+def rename_columns(df):
+    # make all column names lowercase, replace spaces with underscore
+    new_cols = {}
+    for col in df.columns:
+        new = col.strip().lower().replace(" ", "_")
+        new_cols[col] = new
+    df = df.rename(columns=new_cols)
+    print("Renamed columns.")
+    return df
+
+def convert_types(df):
+    # Example: if some numeric columns are stored as object, convert them
+    # We'll try to convert object columns that look numeric
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            try:
+                df[col] = pd.to_numeric(df[col])
+                print(f"Converted column '{col}' to numeric.")
+            except:
+                pass
+    return df
+
+def clean_data(df):
+    inspect_data(df)
+    df = drop_duplicates(df)
+    df = handle_missing(df)
+    df = standardize_text(df)
+    df = fix_date_columns(df)
+    df = rename_columns(df)
+    df = convert_types(df)
+    # After cleaning, inspect again
+    print("After cleaning:")
+    inspect_data(df)
+    return df
+
+def save_data(df, path):
+    df.to_csv(path, index=False)
+    print(f"Saved cleaned data to {path}")
+
+def generate_summary(df_before, df_after, path_summary):
+    report = []
+    report.append("=== Summary Report ===\n")
+    report.append(f"Initial shape: {df_before.shape}\n")
+    report.append(f"Final shape: {df_after.shape}\n")
+    # Duplicate count
+    dup_before = df_before.shape[0] - df_before.drop_duplicates().shape[0]
+    report.append(f"Number of duplicate rows removed: {dup_before}\n")
+    # Missing values before & after
+    missing_before = df_before.isnull().sum()
+    missing_after = df_after.isnull().sum()
+    report.append("Missing values before cleaning:\n")
+    report.append(missing_before.to_string() + "\n")
+    report.append("Missing values after cleaning:\n")
+    report.append(missing_after.to_string() + "\n")
+    # Column renaming, etc
+    report.append(f"Columns before cleaning: {df_before.columns.tolist()}\n")
+    report.append(f"Columns after cleaning: {df_after.columns.tolist()}\n")
+    with open(path_summary, 'w') as f:
+        f.writelines(report)
+    print(f"Saved summary report to {path_summary}")
+
+def main():
+    input_path = "C:\\Users\\Kasi Viswanath\\Downloads\\marketing_campaign.csv"     # change as needed
+    output_path = "Customer_Personality_Analysis_cleaned.csv"
+    summary_path = "cleaning_summary.txt"
+
+    df = load_data(input_path)
+    df_before = df.copy()
+    df_after = clean_data(df)
+    save_data(df_after, output_path)
+    generate_summary(df_before, df_after, summary_path)
+
+if __name__ == "__main__":
+    main()
