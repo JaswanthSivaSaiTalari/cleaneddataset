@@ -1,0 +1,65 @@
+Data Cleaning and Preprocessing: Elevate Labs Internship
+This repository contains the solution to Task 1 for the Data Analyst Internship at Elevate Labs. The project focuses on cleaning and preprocessing a raw marketing dataset.
+
+Dataset
+Filename: marketing_campaign.csv
+
+Source: Provided as part of Elevate Labs internship task materials.
+
+Records: 2240 rows, 29 columns (raw data)
+
+Cleaned Dataset: marketing_campaign_cleaned.csv
+
+Task Overview
+The objective is to clean and standardize the dataset by:
+
+Removing missing values and duplicate rows
+
+Standardizing categorical text fields (e.g., education, marital status)
+
+Unifying date formats (e.g., customer join date)
+
+Cleaning and formatting column headers
+
+Ensuring all data types are correct for each field
+
+Methodology
+Data Loading: Raw data loaded and inspected for column structure and types.
+
+Duplicate Removal: All duplicate rows checked and removed—none were found in this dataset.
+
+Missing Data: Rows with missing values in any field were dropped, resulting in 24 fewer rows.
+
+Text Standardization: All categorical text fields (like education, marital status) converted to lowercase and stripped for consistency.
+
+Date Formatting: All dates formatted as dd-mm-yyyy.
+
+Column Formatting: All columns renamed to be lowercase, separated by underscores for easier processing.
+
+Type Conversion: Each column’s data type was enforced according to content — e.g., IDs and counts as integers, income as float, dates as strings in unified format.
+
+Deliverables
+Cleaned Data File: marketing_campaign_cleaned.csv
+
+Python Cleaning Script: (If needed, please request)
+
+Process Summary: This README
+
+Results
+Final cleaned dataset shape: 2216 rows x 29 columns
+
+All dates and text standardized
+
+All column names and types unified and tidy
+
+Sample of clean data:
+id	year_birth	education	marital_status	income	dt_customer	...
+5524	1957	graduation	single	58138.0	04-09-2012	...
+2174	1954	graduation	single	46344.0	08-03-2014	...
+4141	1965	graduation	together	71613.0	21-08-2013	...
+Usage
+Use the cleaned CSV for further data analysis, reporting, or modeling. All major cleaning steps and decisions are documented in the code and in this README.
+
+Contact
+For questions or to request the full cleaning script, please open an issue or contact the repository maintainer.
+
